@@ -55,6 +55,9 @@ public class SysUser extends BaseEntity
     /** 密码 */
     private String password;
 
+    /** 工资等级 */
+    private Long levelId;
+
     /** 帐号状态（0正常 1停用） */
     @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
     private String status;
@@ -207,6 +210,16 @@ public class SysUser extends BaseEntity
         this.password = password;
     }
 
+    public void setLevelId(Long levelId)
+    {
+        this.levelId = levelId;
+    }
+
+    public Long getLevelId()
+    {
+        return levelId;
+    }
+
     public String getStatus()
     {
         return status;
@@ -309,6 +322,7 @@ public class SysUser extends BaseEntity
             .append("sex", getSex())
             .append("avatar", getAvatar())
             .append("password", getPassword())
+            .append("levelId", getLevelId())
             .append("status", getStatus())
             .append("delFlag", getDelFlag())
             .append("loginIp", getLoginIp())
