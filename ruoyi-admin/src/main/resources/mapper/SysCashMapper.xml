@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cash.mapper.SysCashMapper">
+    
+    <resultMap type="SysCash" id="SysCashResult">
+        <result property="cashId"    column="cash_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="cashType"    column="cash_type"    />
+        <result property="cashNum"    column="cash_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysCashVo">
+        select cash_id, user_id, dept_id, cash_type, cash_num, create_by, create_time, update_by, update_time from sys_cash
+    </sql>
+
+    <select id="selectSysCashList" parameterType="SysCash" resultMap="SysCashResult">
+        <include refid="selectSysCashVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="cashType != null "> and cash_type = #{cashType}</if>
+            <if test="cashNum != null "> and cash_num = #{cashNum}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysCashByCashId" parameterType="Long" resultMap="SysCashResult">
+        <include refid="selectSysCashVo"/>
+        where cash_id = #{cashId}
+    </select>
+
+    <insert id="insertSysCash" parameterType="SysCash" useGeneratedKeys="true" keyProperty="cashId">
+        insert into sys_cash
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="cashType != null">cash_type,</if>
+            <if test="cashNum != null">cash_num,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="cashType != null">#{cashType},</if>
+            <if test="cashNum != null">#{cashNum},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCash" parameterType="SysCash">
+        update sys_cash
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="cashType != null">cash_type = #{cashType},</if>
+            <if test="cashNum != null">cash_num = #{cashNum},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where cash_id = #{cashId}
+    </update>
+
+    <delete id="deleteSysCashByCashId" parameterType="Long">
+        delete from sys_cash where cash_id = #{cashId}
+    </delete>
+
+    <delete id="deleteSysCashByCashIds" parameterType="String">
+        delete from sys_cash where cash_id in 
+        <foreach item="cashId" collection="array" open="(" separator="," close=")">
+            #{cashId}
+        </foreach>
+    </delete>
+</mapper>

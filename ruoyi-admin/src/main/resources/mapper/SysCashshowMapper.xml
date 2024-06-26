@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cashshow.mapper.SysCashshowMapper">
+    
+    <resultMap type="SysCashshow" id="SysCashshowResult">
+        <result property="cashId"    column="cash_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="cashType"    column="cash_type"    />
+        <result property="cashNum"    column="cash_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+    <resultMap type="SysUser" id="SysUserResult">
+        <id     property="userId"       column="user_id"      />
+        <result property="deptId"       column="dept_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+        <result property="avatar"       column="avatar"       />
+        <result property="password"     column="password"     />
+		<result property="levelId"    	column="level_id"    />
+        <result property="status"       column="status"       />
+        <result property="delFlag"      column="del_flag"     />
+        <result property="loginIp"      column="login_ip"     />
+        <result property="loginDate"    column="login_date"   />
+        <result property="createBy"     column="create_by"    />
+        <result property="createTime"   column="create_time"  />
+        <result property="updateBy"     column="update_by"    />
+        <result property="updateTime"   column="update_time"  />
+        <result property="remark"       column="remark"       />
+        <association property="dept"    javaType="SysDept"         resultMap="deptResult" />
+        <collection  property="roles"   javaType="java.util.List"  resultMap="RoleResult" />
+    </resultMap>
+
+    <!-- <resultMap type="SysCashtype" id="SysCashtypeResult">
+        <result property="cashType"    column="cash_type"    />
+        <result property="typeNmae"    column="type_name"    />
+    </resultMap> -->
+
+    <sql id="selectSysCashshowVo">
+        select c.cash_id, c.user_id, c.dept_id, c.cash_type, c.cash_num, c.create_by, c.create_time, c.update_by, c.update_time 
+        from sys_cash c
+        join sys_user u on c.user_id = u.user_id
+        <!-- join sys_cash_type t on c.cash_type = t.cash_type -->
+    </sql>
+
+    <select id="selectSysCashshowList" parameterType="SysCashshow" resultMap="SysCashshowResult">
+        <include refid="selectSysCashshowVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <!-- <if test="cashType != null "> and cash_type = #{cashType}</if> -->
+            <if test="typeName != null "> and type_name = #{typeName}</if>
+            <if test="cashNum != null "> and cash_num = #{cashNum}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+        </where>
+        ${params.dataScope}
+    </select>
+    
+    <select id="selectSysCashshowByCashId" parameterType="Long" resultMap="SysCashshowResult">
+        <include refid="selectSysCashshowVo"/>
+        where cash_id = #{cashId}
+    </select>
+
+    <insert id="insertSysCashshow" parameterType="SysCashshow" useGeneratedKeys="true" keyProperty="cashId">
+        insert into sys_cash
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="cashType != null">cash_type,</if>
+            <if test="cashNum != null">cash_num,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="cashType != null">#{cashType},</if>
+            <if test="cashNum != null">#{cashNum},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCashshow" parameterType="SysCashshow">
+        update sys_cash
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="cashType != null">cash_type = #{cashType},</if>
+            <if test="cashNum != null">cash_num = #{cashNum},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where cash_id = #{cashId}
+    </update>
+
+    <delete id="deleteSysCashshowByCashId" parameterType="Long">
+        delete from sys_cash where cash_id = #{cashId}
+    </delete>
+
+    <delete id="deleteSysCashshowByCashIds" parameterType="String">
+        delete from sys_cash where cash_id in 
+        <foreach item="cashId" collection="array" open="(" separator="," close=")">
+            #{cashId}
+        </foreach>
+    </delete>
+</mapper>
